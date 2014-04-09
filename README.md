@@ -1,4 +1,4 @@
 # sish
 
-Just a *si*mple *sh*ell developed as a class project. Originally developed to
+Just a <b>si</b>mple <b>sh</b>ell developed as a class project. Originally developed to
 work in MINIX.
