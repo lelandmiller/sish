@@ -13,7 +13,7 @@ build/lex.yy.o: build/lex.yy.c
 	$(CC) -o build/lex.yy.o -c build/lex.yy.c
 
 build/lex.yy.c: build_dir src/lex.c
-	flex -o build/lex.yy.c src/lex.c
+	flex -obuild/lex.yy.c src/lex.c
 
 build_dir:
 	@mkdir -p build
