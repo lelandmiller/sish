@@ -3,7 +3,7 @@ CC=cc
 CFLAGS=-Wall
 
 build: bin_dir build/shell.o build/lex.yy.o
-	$(CC) -o sish build/shell.o build/lex.yy.o
+	$(CC) -o bin/sish build/shell.o build/lex.yy.o
 
 
 build/shell.o: build_dir src/shell.c
