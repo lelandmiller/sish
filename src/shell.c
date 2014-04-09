@@ -6,6 +6,7 @@
 
 extern char **get_line(void);
 
+
 int run_external(char **args) {
   pid_t pid;
   pid = fork();
@@ -15,15 +16,31 @@ int run_external(char **args) {
     wait(&status);
   } else if (pid == 0) {
     /* Then we are child */
-    char *p = "";
     execvp(args[0], args);
+    /* At this point there was an error in execvp */
+    fprintf(stderr, "Error opening: %s.", args[0]);
   } else {
     /* TODO Error */
   }
 }
 
 void print_chrome() {
+  /* switch color */
+  printf("\x1b[35;1m");
   printf(">> ");
+  printf("\x1b[0m");
+}
+
+void run_command(char **args) {
+  char *cmd = args[0];
+  if (strcmp(cmd,"exit") == 0) {
+    exit(0);
+  } else if (strcmp(cmd,"cd") == 0) {
+    /* TODO needs error checking on input and chdir return */
+    chdir(args[1]);
+  } else {
+    run_external(args);
+  }
 }
 
 int main(int argc, char *argv[]) {
@@ -36,10 +53,7 @@ int main(int argc, char *argv[]) {
     for(i = 0; args[i] != NULL; i++) {
       printf("Argument %d: %s\n", i, args[i]);
     }
-    if (strcmp(args[0],"exit") == 0) {
-      exit(0);
-    }
-    run_external(args);
+    run_command(args);
   }
   return 0;
 }
