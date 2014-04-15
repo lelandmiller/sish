@@ -4,6 +4,8 @@
 #include <errno.h>
 #include <sys/wait.h>
 #include <stdbool.h>
+#include <stdlib.h>
+#include <string.h>
 
 #define MAX_PATH_LENGTH 256
 #define MAX_COMMANDS 256
@@ -18,6 +20,7 @@ int run_external(char **args, char* input, char* output,  bool bg) {
     /* Then we are parent */
     int status;
     wait(&status);
+    /* Clear up zombies */
   } else if (pid == 0) {
     
     /* Then we are child */
@@ -39,25 +42,14 @@ int run_external(char **args, char* input, char* output,  bool bg) {
 void print_chrome(void) {
   /* switch color */
   char cwd[MAX_PATH_LENGTH];
-  getcwd(&cwd,MAX_PATH_LENGTH);
+  getcwd(cwd,MAX_PATH_LENGTH);
   printf("\x1b[35;1m");
   printf("%s \x1b[32;1m>> ", cwd);
   printf("\x1b[0m");
 }
 
-/*
-int count_array(char **args) {
-  int c = 0;
-  while (*args != NULL) {
-    c++;
-    args++;
-  }
-  return c;
-}
-*/
-
 void run_command(char **args) {
-  char *new_args[MAX_COMMANDS];
+  char * new_args[MAX_COMMANDS];
   char *cmd;
   char *input = NULL;
   char *output = NULL;
@@ -65,21 +57,21 @@ void run_command(char **args) {
   
   char **new_args_i = new_args;
   while (*args != NULL) {
-    if (strcmp(*args,"<")) {
+    if (strcmp(*args,"<") == 0) {
       args++;
       if (*args) {
         input = *args;
       } else {
         break;
       }
-    } else if (strcmp(*args,">")) {
+    } else if (strcmp(*args,">") == 0) {
       args++;
       if (*args) {
         output = *args; 
       } else {
         break;
       }
-    } else if (strcmp(*args,"&")) {
+    } else if (strcmp(*args,"&") == 0) {
       bg = true;
     } else {
       *new_args_i = *args;
@@ -94,7 +86,7 @@ void run_command(char **args) {
     exit(0);
   } else if (strcmp(cmd,"cd") == 0) {
     /* TODO needs error checking on input and chdir return */
-    chdir(args[1]);
+    chdir(new_args[1]);
   } else {
     run_external(new_args, input, output, bg);
   }
@@ -107,10 +99,11 @@ int main(int argc, char *argv[]) {
     print_chrome();
     args = get_line();
     if(!args) break;
+    /*
     for(i = 0; args[i] != NULL; i++) {
       printf("Argument %d: %s\n", i, args[i]);
     }
-
+    */
     run_command(args);
   }
   return 0;
