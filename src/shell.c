@@ -5,6 +5,9 @@
 #include <sys/wait.h>
 #include <stdbool.h>
 
+#define MAX_PATH_LENGTH 256
+#define MAX_COMMANDS 256
+
 extern char **get_line(void);
 
 
@@ -35,13 +38,14 @@ int run_external(char **args, char* input, char* output,  bool bg) {
 
 void print_chrome(void) {
   /* switch color */
-  char cwd[256];
-  getcwd(&cwd,256);
+  char cwd[MAX_PATH_LENGTH];
+  getcwd(&cwd,MAX_PATH_LENGTH);
   printf("\x1b[35;1m");
   printf("%s \x1b[32;1m>> ", cwd);
   printf("\x1b[0m");
 }
 
+/*
 int count_array(char **args) {
   int c = 0;
   while (*args != NULL) {
@@ -50,18 +54,49 @@ int count_array(char **args) {
   }
   return c;
 }
+*/
 
 void run_command(char **args) {
-  /*bool bg = false;*/
-  char *cmd = args[0];
-  printf("argc: %d\n", count_array(args));
+  char *new_args[MAX_COMMANDS];
+  char *cmd;
+  char *input = NULL;
+  char *output = NULL;
+  bool bg = false;
+  
+  char **new_args_i = new_args;
+  while (*args != NULL) {
+    if (strcmp(*args,"<")) {
+      args++;
+      if (*args) {
+        input = *args;
+      } else {
+        break;
+      }
+    } else if (strcmp(*args,">")) {
+      args++;
+      if (*args) {
+        output = *args; 
+      } else {
+        break;
+      }
+    } else if (strcmp(*args,"&")) {
+      bg = true;
+    } else {
+      *new_args_i = *args;
+      new_args_i++; 
+    }
+    args++;
+  }
+  *args = NULL;
+
+  cmd = new_args[0];
   if (strcmp(cmd,"exit") == 0) {
     exit(0);
   } else if (strcmp(cmd,"cd") == 0) {
     /* TODO needs error checking on input and chdir return */
     chdir(args[1]);
   } else {
-    run_external(args, "test.txt", NULL, false);
+    run_external(new_args, input, output, bg);
   }
 }
 
