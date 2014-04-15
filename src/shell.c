@@ -19,10 +19,10 @@ int run_external(char **args, char* input, char* output,  bool bg) {
     
     /* Then we are child */
     if (input) {
-      freopen(input, "r", "stdin");
+      freopen(input, "r", stdin);
     }
     if (output) {
-
+      freopen(output, "w", stdout);
     }
 
     execvp(args[0], args);
@@ -35,8 +35,10 @@ int run_external(char **args, char* input, char* output,  bool bg) {
 
 void print_chrome(void) {
   /* switch color */
+  char cwd[256];
+  getcwd(&cwd,256);
   printf("\x1b[35;1m");
-  printf(">> ");
+  printf("%s \x1b[32;1m>> ", cwd);
   printf("\x1b[0m");
 }
 
