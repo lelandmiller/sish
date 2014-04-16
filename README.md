@@ -1,6 +1,6 @@
 # sish
 
-Just a <b>si</b>mple <b>sh</b>ell developed as a class project. Originally developed to work in MINIX. The code was based of templates given to us in class, lex.c was provided, and shell.c was only an input loop that called the lexer. The design document was worked on with my group, and the instructions.pdf was provided by the professor, Nathan Whitehead.
+Just a <b>si</b>mple <b>sh</b>ell developed as a class project by Leland Miller and his team. Originally developed to work in MINIX. The code was based of templates given to us in class, lex.c was provided, and shell.c was only an input loop that called the lexer. The design document was worked on with my group, and the instructions.pdf was provided by the professor, Nathan Whitehead.
 
 ## Building
 
