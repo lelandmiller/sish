@@ -19,7 +19,15 @@ int run_external(char **args, char* input, char* output,  bool bg) {
   if (pid > 0) {
     /* Then we are parent */
     int status;
-    wait(&status);
+    pid_t reaped_pid;
+    if (!bg) { 
+      do {
+        reaped_pid = wait(&status);
+        if (reaped_pid != pid) {
+          printf("%d: background process terminated\n", reaped_pid); 
+        }
+      } while (reaped_pid != pid);
+    }
     /* Clear up zombies */
   } else if (pid == 0) {
     
@@ -49,7 +57,7 @@ void print_chrome(void) {
 }
 
 void run_command(char **args) {
-  char * new_args[MAX_COMMANDS];
+  char *new_args[MAX_COMMANDS];
   char *cmd;
   char *input = NULL;
   char *output = NULL;
@@ -99,11 +107,9 @@ int main(int argc, char *argv[]) {
     print_chrome();
     args = get_line();
     if(!args) break;
-    /*
     for(i = 0; args[i] != NULL; i++) {
       printf("Argument %d: %s\n", i, args[i]);
     }
-    */
     run_command(args);
   }
   return 0;
