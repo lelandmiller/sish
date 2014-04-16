@@ -87,7 +87,7 @@ void run_command(char **args) {
     }
     args++;
   }
-  *args = NULL;
+  *new_args_i = NULL;
 
   cmd = new_args[0];
   if (strcmp(cmd,"exit") == 0) {
@@ -107,9 +107,11 @@ int main(int argc, char *argv[]) {
     print_chrome();
     args = get_line();
     if(!args) break;
+    /*
     for(i = 0; args[i] != NULL; i++) {
       printf("Argument %d: %s\n", i, args[i]);
     }
+    */
     run_command(args);
   }
   return 0;
