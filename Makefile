@@ -1,6 +1,7 @@
-#TODO CFLAGS doesn't do anything
+# Makefile
+# Builds sish
+# CREATED 04/08/14 (Leland Miller)
 CC=cc
-CFLAGS=-Wall
 
 build: bin_dir build/shell.o build/lex.yy.o
 	$(CC) -o bin/sish build/shell.o build/lex.yy.o

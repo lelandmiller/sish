@@ -1,5 +1,10 @@
 /* shell.c
- * Contains the main code for shell functionality.
+ *
+ * Contains the main code for shell functionality. Its original code was just
+ * a loop in main that read input and printed the arguments, and was given by
+ * Nathan Whitehead.
+ *
+ * CHANGED 04/16/14 (Leland Miller)
  */
 
 #include <stdio.h>
@@ -23,7 +28,8 @@ extern char **get_line(void);
  * redirection (NULL is none), output is a possible output redirection,
  * and bg is true for a background process. 
  */
-int run_external(char **args, char* input, char* output,  bool bg) {
+int run_external(char **args, char* input, char* output,  bool bg) 
+{
   pid_t pid; /* Will be the pid of the fork result */
   pid = fork();
   if (pid > 0) {
@@ -61,7 +67,8 @@ int run_external(char **args, char* input, char* output,  bool bg) {
 }
 
 /* Prints the prompt with current directory and colors */
-void print_chrome(void) {
+void print_chrome(void) 
+{
   /* switch color */
   char cwd[MAX_PATH_LENGTH];
   if (getcwd(cwd,MAX_PATH_LENGTH)) {
@@ -76,7 +83,8 @@ void print_chrome(void) {
 /* Takes a list of arguments an changes the working directory to
  * argument 1, checking for errors 
  */
-change_dir(char **args) {
+change_dir(char **args) 
+{
   if (args[1] == NULL) {
     fprintf(stderr, "Usage: cd path\ncd requires a path\n");
   } else {
@@ -90,7 +98,8 @@ change_dir(char **args) {
  * commands, and if required sends an array of the rest of
  * the arguments to run_external()
  */
-void run_command(char **args) {
+void run_command(char **args) 
+{
   char *new_args[MAX_COMMANDS]; /* Holds filtered arguments */
   char **new_args_i = new_args; /* Used as a pointer in loop */
   
@@ -109,13 +118,15 @@ void run_command(char **args) {
   /* Loop through all arguments */
   while (*args != NULL) {
     if (strcmp(*args,"<") == 0) {
-      args++;
+      /* This is an input redirection */
+      args++; /* Move to next argument */
       if (*args) {
         input = *args;
       } else {
-        break;
+        break; /* There was no argument after symbol, so break */
       }
     } else if (strcmp(*args,">") == 0) {
+      /* This is an output redirection */
       args++;
       if (*args) {
         output = *args; 
@@ -123,8 +134,10 @@ void run_command(char **args) {
         break;
       }
     } else if (strcmp(*args,"&") == 0) {
+      /* Run process in background */
       bg = true;
     } else {
+      /* Else this argument should be sent to the external command */
       *new_args_i = *args;
       new_args_i++; 
     }
@@ -144,19 +157,17 @@ void run_command(char **args) {
 }
 
 /* Entry point, simple input loop */
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[]) 
+{
   int i; 
   char **args; 
   while(1) {
     print_chrome();
     args = get_line();
+    
     /* Checks end of file */
     if(!args) break;
-    /* Used for debugging
-    for(i = 0; args[i] != NULL; i++) {
-      printf("Argument %d: %s\n", i, args[i]);
-    }
-    */
+
     run_command(args);
   }
   return 0;

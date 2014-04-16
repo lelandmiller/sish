@@ -1,3 +1,8 @@
+/* lex.c
+ *
+ * Given by Nathan Whitehead, no modification by Leland Miller
+ */
+
 %option noyywrap
 
 %{
