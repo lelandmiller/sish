@@ -47,22 +47,27 @@ int run_external(char **args, char* input, char* output,  bool bg)
     }
     /* Clear up zombies */
   } else if (pid == 0) {
-    
     /* Then we are child */
+
+    /* Setup redirection */
     if (input) {
-      freopen(input, "r", stdin);
+      if (freopen(input, "r", stdin) == NULL) {
+        fprintf(stderr, "Error opening input stream\n");
+      }
     }
     if (output) {
-      freopen(output, "w", stdout);
+      if (freopen(output, "w", stdout) == NULL) {
+        fprintf(stderr, "Error opening output stream\n");
+      } 
     }
 
     execvp(args[0], args);
 
     /* At this point there was an error in execvp */
-    fprintf(stderr, "Error opening: %s.", args[0]);
+    fprintf(stderr, "Error opening: %s\n", args[0]);
     
   } else {
-    fprintf(stderr, "Error forking a child process");
+    fprintf(stderr, "Error forking a child process\n");
   }
 }
 
